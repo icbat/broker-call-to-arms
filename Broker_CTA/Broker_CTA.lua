@@ -14,18 +14,27 @@ function broker_cta.listRandomDungeons()
    return result
 end
 
-function  broker_cta.filterToEligible(dungeons)
+function broker_cta.listRaids()
+   local result = {}
+   for i = 1, GetNumRFDungeons() do
+      local id, name = GetRFDungeonInfo(i)
+      result[i] = {["id"] = id, ["name"] = name}
+   end
+   return result
+end
+
+function  broker_cta.filterToEligible(instances)
     local result = {}
     local count = 1
-    for i=1,#dungeons do
-        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(dungeons[i]["id"], 1)
+    for i=1,#instances do
+        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(instances[i]["id"], 1)
         if eligible and needsTank and (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0) then
             result[count] = {
                 ["needsTank"] = needsTank,
                 ["needsHealer"] = needsHealer,
                 ["needsDamage"] = needsDamage,
-                ["name"] = dungeons[i]["name"],
-                ["id"] = dungeons[i]["id"]
+                ["name"] = instances[i]["name"],
+                ["id"] = instances[i]["id"]
             }
 
             count = count + 1
@@ -43,13 +52,21 @@ f:SetScript("OnUpdate", function(self, elap)
     elapsed = 0
 
     local dungeons = broker_cta.listRandomDungeons()
-    local filtered = broker_cta.filterToEligible(dungeons)
-    if filtered == nil or #filtered == 0 then
+    local raids = broker_cta.listRaids()
+    local filteredDungeons = broker_cta.filterToEligible(dungeons)
+    local filteredRaids = broker_cta.filterToEligible(raids)
+    local sum = 0
+    if filteredDungeons ~= nil then
+        sum = sum + #filteredDungeons
+    end
+    if filteredRaids ~= nil then
+        sum = sum + #filteredRaids
+    end
+    if sum == 0 then
         dataobj.text = "No satchels"
     else
-        dataobj.text = #filtered
+        dataobj.text = sum
     end
-
 end)
 
 
@@ -57,11 +74,22 @@ function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
     local dungeons = broker_cta.listRandomDungeons()
     local filtered = broker_cta.filterToEligible(dungeons)
+    self:AddLine("Dungeons", 0, 1, 0)
     if filtered == nil or #filtered == 0 then
-        self:AddLine("No satchels available", 1, 1, 1)
+        self:AddLine("No dungeons currently reward satchels", 1, 1, 1)
     else
         for i=1,#filtered do
             self:AddLine(filtered[i]["name"], 1, 1, 1)
+        end
+    end
+
+    local filteredRaids = broker_cta.filterToEligible(broker_cta.listRaids())
+    if filteredRaids == nil or #filteredRaids == 0 then
+        self:AddLine("No raids currently reward satchels", 1, 1, 1)
+    else
+        self:AddLine("Raids", 0, 1, 0)
+        for i=1,#filteredRaids do
+            self:AddLine(filteredRaids[i]["name"], 1, 1, 1)
         end
     end
 end
