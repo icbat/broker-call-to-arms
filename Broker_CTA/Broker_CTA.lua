@@ -18,8 +18,8 @@ function  broker_cta.filterToEligible(dungeons)
     local result = {}
     local count = 1
     for i=1,#dungeons do
-        local eligible, needsTank, needsHealer, needsDamage = GetLFGRoleShortageRewards(dungeons[i]["id"], 1)
-        if eligible then
+        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(dungeons[i]["id"], 1)
+        if eligible and needsTank and (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0) then
             result[count] = {
                 ["needsTank"] = needsTank,
                 ["needsHealer"] = needsHealer,
