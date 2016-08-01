@@ -44,7 +44,9 @@ f:SetScript("OnUpdate", function(self, elap)
 
     local dungeons = broker_cta.listRandomDungeons()
     local filtered = broker_cta.filterToEligible(dungeons)
-    if filtered ~= nil then
+    if filtered == nil or #filtered == 0 then
+        dataobj.text = "No satchels"
+    else
         dataobj.text = #filtered
     end
 
@@ -55,7 +57,9 @@ function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
     local dungeons = broker_cta.listRandomDungeons()
     local filtered = broker_cta.filterToEligible(dungeons)
-    if filtered ~= nil then
+    if filtered == nil or #filtered == 0 then
+        self:AddLine("No satchels available", 1, 1, 1)
+    else
         for i=1,#filtered do
             self:AddLine(filtered[i]["name"], 1, 1, 1)
         end
