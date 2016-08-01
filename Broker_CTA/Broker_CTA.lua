@@ -23,12 +23,13 @@ function broker_cta.listRaids()
    return result
 end
 
-function  broker_cta.filter(instances)
+function  broker_cta.filter(instances, selectedRoles)
     local result = {}
     local count = 1
     for i=1,#instances do
         local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(instances[i]["id"], 1)
-        if eligible and needsTank and (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0) then
+        local neededRoles = broker_cta.wrapRoles(needsTank, needsHealer, needsDamage)
+        if eligible and broker_cta.canFillNeed(selectedRoles, neededRoles) and (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0) then
             result[count] = {
                 ["needsTank"] = needsTank,
                 ["needsHealer"] = needsHealer,
@@ -43,6 +44,28 @@ function  broker_cta.filter(instances)
     return result
 end
 
+function broker_cta.canFillNeed(selectedRoles, neededRoles)
+    for i=1, #selectedRoles do
+        if selectedRoles[i] and neededRoles[i] then
+            return true
+        end
+    end
+    return false
+end
+
+function broker_cta.getSelectedRoles()
+    local leader, tank, healer, damage = GetLFGRoles()
+    return broker_cta.wrapRoles(tank, healer, damage)
+end
+
+function broker_cta.wrapRoles(tank, healer, damage)
+    return {
+        [1] = tank,
+        [2] = healer,
+        [3] = damage
+    }
+end
+
 
 local f = CreateFrame("frame")
 local UPDATEPERIOD, elapsed = 0.5, 0
@@ -51,12 +74,14 @@ f:SetScript("OnUpdate", function(self, elap)
 	if elapsed < UPDATEPERIOD then return end
     elapsed = 0
 
+    local roles = broker_cta.getSelectedRoles()
+
     local sum = 0
-    local dungeons = broker_cta.filter(broker_cta.listDungeons())
+    local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
     if dungeons ~= nil then
         sum = sum + #dungeons
     end
-    local raids = broker_cta.filter(broker_cta.listRaids())
+    local raids = broker_cta.filter(broker_cta.listRaids(), roles)
     if raids ~= nil then
         sum = sum + #raids
     end
@@ -69,8 +94,9 @@ end)
 
 
 function dataobj:OnTooltipShow()
+    local roles = broker_cta.getSelectedRoles()
 	self:AddLine(addonName)
-    local dungeons = broker_cta.filter(broker_cta.listDungeons())
+    local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
     self:AddLine("Dungeons", 0, 1, 0)
     if dungeons == nil or #dungeons == 0 then
         self:AddLine("No dungeons currently reward satchels", 1, 1, 1)
@@ -80,7 +106,7 @@ function dataobj:OnTooltipShow()
         end
     end
 
-    local raids = broker_cta.filter(broker_cta.listRaids())
+    local raids = broker_cta.filter(broker_cta.listRaids(), roles)
     if raids == nil or #raids == 0 then
         self:AddLine("No raids currently reward satchels", 1, 1, 1)
     else
