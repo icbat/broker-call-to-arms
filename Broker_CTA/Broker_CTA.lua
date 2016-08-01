@@ -1,6 +1,7 @@
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 
-local dataobj = ldb:NewDataObject("Call To Arms", {type = "data source", text = "Static Text Here"})
+local addonName = "Call To Arms"
+local dataobj = ldb:NewDataObject(addonName, {type = "data source", text = "Static Text Here"})
 
 local broker_cta = {}
 
@@ -48,3 +49,27 @@ f:SetScript("OnUpdate", function(self, elap)
     end
 
 end)
+
+
+function dataobj:OnTooltipShow()
+	self:AddLine(addonName)
+    local dungeons = broker_cta.listRandomDungeons()
+    local filtered = broker_cta.filterToEligible(dungeons)
+    if filtered ~= nil then
+        for i=1,#filtered do
+            self:AddLine(filtered[i]["name"], 1, 1, 1)
+        end
+    end
+end
+
+function dataobj:OnEnter()
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+	GameTooltip:ClearLines()
+	dataobj.OnTooltipShow(GameTooltip)
+	GameTooltip:Show()
+end
+
+function dataobj:OnLeave()
+	GameTooltip:Hide()
+end
