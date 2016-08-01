@@ -5,7 +5,7 @@ local dataobj = ldb:NewDataObject(addonName, {type = "data source", text = "Stat
 
 local broker_cta = {}
 
-function broker_cta.listRandomDungeons()
+function broker_cta.listDungeons()
    local result = {}
    for i = 1, GetNumRandomDungeons() do
       local id, name = GetLFGRandomDungeonInfo(i)
@@ -23,7 +23,7 @@ function broker_cta.listRaids()
    return result
 end
 
-function  broker_cta.filterToEligible(instances)
+function  broker_cta.filter(instances)
     local result = {}
     local count = 1
     for i=1,#instances do
@@ -51,16 +51,14 @@ f:SetScript("OnUpdate", function(self, elap)
 	if elapsed < UPDATEPERIOD then return end
     elapsed = 0
 
-    local dungeons = broker_cta.listRandomDungeons()
-    local raids = broker_cta.listRaids()
-    local filteredDungeons = broker_cta.filterToEligible(dungeons)
-    local filteredRaids = broker_cta.filterToEligible(raids)
     local sum = 0
-    if filteredDungeons ~= nil then
-        sum = sum + #filteredDungeons
+    local dungeons = broker_cta.filter(broker_cta.listDungeons())
+    if dungeons ~= nil then
+        sum = sum + #dungeons
     end
-    if filteredRaids ~= nil then
-        sum = sum + #filteredRaids
+    local raids = broker_cta.filter(broker_cta.listRaids())
+    if raids ~= nil then
+        sum = sum + #raids
     end
     if sum == 0 then
         dataobj.text = "No satchels"
@@ -72,24 +70,23 @@ end)
 
 function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
-    local dungeons = broker_cta.listRandomDungeons()
-    local filtered = broker_cta.filterToEligible(dungeons)
+    local dungeons = broker_cta.filter(broker_cta.listDungeons())
     self:AddLine("Dungeons", 0, 1, 0)
-    if filtered == nil or #filtered == 0 then
+    if dungeons == nil or #dungeons == 0 then
         self:AddLine("No dungeons currently reward satchels", 1, 1, 1)
     else
-        for i=1,#filtered do
-            self:AddLine(filtered[i]["name"], 1, 1, 1)
+        for i=1,#dungeons do
+            self:AddLine(dungeons[i]["name"], 1, 1, 1)
         end
     end
 
-    local filteredRaids = broker_cta.filterToEligible(broker_cta.listRaids())
-    if filteredRaids == nil or #filteredRaids == 0 then
+    local raids = broker_cta.filter(broker_cta.listRaids())
+    if raids == nil or #raids == 0 then
         self:AddLine("No raids currently reward satchels", 1, 1, 1)
     else
         self:AddLine("Raids", 0, 1, 0)
-        for i=1,#filteredRaids do
-            self:AddLine(filteredRaids[i]["name"], 1, 1, 1)
+        for i=1,#raids do
+            self:AddLine(raids[i]["name"], 1, 1, 1)
         end
     end
 end
