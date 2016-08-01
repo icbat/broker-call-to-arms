@@ -1,5 +1,3 @@
-function MyAddon_OnLoad()
-    SlashCmdList["MyAddon"] = MyAddon_SlashCommand;
-    SLASH_MYADDON1= "/myaddon";
-    this:RegisterEvent("VARIABLES_LOADED")
-end
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+
+ldb:NewDataObject("Call To Arms", {type = "data source", text = "Static Text Here"})
