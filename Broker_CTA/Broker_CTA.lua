@@ -1,51 +1,47 @@
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 
 local addonName = "Call To Arms"
+local _G
 local dataobj = ldb:NewDataObject(addonName, {
     type = "data source",
-    text = "Static Text Here",
+    text = "Broker: Call to Arms",
     OnClick = function(clickedframe, button)
 		_G.LFDMicroButton:GetScript("OnClick")(_G.LFDMicroButton, button)
     end
 })
 
 local broker_cta = {}
-local _G
 
 function broker_cta.listDungeons()
-   local result = {}
-   for i = 1, GetNumRandomDungeons() do
-      local id, name = GetLFGRandomDungeonInfo(i)
-      result[i] = {["id"] = id, ["name"] = name}
-   end
-   return result
+   return broker_cta.list(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
 end
 
 function broker_cta.listRaids()
-   local result = {}
-   for i = 1, GetNumRFDungeons() do
-      local id, name = GetRFDungeonInfo(i)
-      result[i] = {["id"] = id, ["name"] = name}
-   end
-   return result
+   return broker_cta.list(GetNumRFDungeons, GetRFDungeonInfo)
 end
 
-function  broker_cta.filter(instances, selectedRoles)
+function broker_cta.list(listFunction, infoFunction)
     local result = {}
-    local count = 1
+    for i = 1, listFunction() do
+       local id, name = infoFunction(i)
+       result[i] = {["id"] = id, ["name"] = name}
+    end
+    return result
+end
+
+function broker_cta.filter(instances, selectedRoles)
+    local result = {}
     for i=1,#instances do
         local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(instances[i]["id"], 1)
         local neededRoles = broker_cta.wrapRoles(needsTank, needsHealer, needsDamage)
-        if eligible and broker_cta.canFillNeed(selectedRoles, neededRoles) and (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0) then
-            result[count] = {
+        if eligible and broker_cta.canFillNeed(selectedRoles, neededRoles) and broker_cta.rewardsAreWanted(itemCount, money, xp, secretFourthOption) then
+            result[#result + 1] = {
                 ["needsTank"] = needsTank,
                 ["needsHealer"] = needsHealer,
                 ["needsDamage"] = needsDamage,
                 ["name"] = instances[i]["name"],
                 ["id"] = instances[i]["id"]
             }
-
-            count = count + 1
         end
     end
     return result
@@ -60,6 +56,11 @@ function broker_cta.canFillNeed(selectedRoles, neededRoles)
     return false
 end
 
+-- secretFourthOption is literally undocumented. Including it here, but it may not be worth including, or it may not even be a reward!
+function broker_cta.rewardsAreWanted(itemCount, money, xp, secretFourthOption)
+    return (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0)
+end
+
 function broker_cta.getSelectedRoles()
     local leader, tank, healer, damage = GetLFGRoles()
     return broker_cta.wrapRoles(tank, healer, damage)
@@ -72,7 +73,6 @@ function broker_cta.wrapRoles(tank, healer, damage)
         [3] = damage
     }
 end
-
 
 local f = CreateFrame("frame")
 local UPDATEPERIOD, elapsed = 0.5, 0
@@ -101,25 +101,22 @@ end)
 
 
 function dataobj:OnTooltipShow()
-    local roles = broker_cta.getSelectedRoles()
 	self:AddLine(addonName)
-    local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
-    self:AddLine("Dungeons", 0, 1, 0)
-    if dungeons == nil or #dungeons == 0 then
-        self:AddLine("No dungeons currently reward satchels", 1, 1, 1)
-    else
-        for i=1,#dungeons do
-            self:AddLine(dungeons[i]["name"], 1, 1, 1)
-        end
-    end
+    local roles = broker_cta.getSelectedRoles()
 
-    local raids = broker_cta.filter(broker_cta.listRaids(), roles)
-    if raids == nil or #raids == 0 then
-        self:AddLine("No raids currently reward satchels", 1, 1, 1)
+    self:AddLine("Dungeons", 0, 1, 0)
+    broker_cta.displayList(self, broker_cta.filter(broker_cta.listDungeons(), roles))
+
+    self:AddLine("Raids", 0, 1, 0)
+    broker_cta.displayList(self, broker_cta.filter(broker_cta.listRaids(), roles))
+end
+
+function broker_cta.displayList(self, instanceList)
+    if instanceList == nil or #instanceList == 0 then
+        self:AddLine("No reward satchels found", 1, 1, 1)
     else
-        self:AddLine("Raids", 0, 1, 0)
-        for i=1,#raids do
-            self:AddLine(raids[i]["name"], 1, 1, 1)
+        for i=1,#instanceList do
+            self:AddLine(instanceList[i]["name"], 1, 1, 1)
         end
     end
 end
