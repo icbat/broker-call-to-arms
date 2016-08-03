@@ -75,7 +75,8 @@ function broker_cta.wrapRoles(tank, healer, damage)
 end
 
 local f = CreateFrame("frame")
-local UPDATEPERIOD, elapsed = 0.5, 0
+local UPDATEPERIOD = 5
+local elapsed = 0
 f:SetScript("OnUpdate", function(self, elap)
 	elapsed = elapsed + elap
 	if elapsed < UPDATEPERIOD then return end
