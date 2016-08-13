@@ -70,6 +70,25 @@ function broker_cta.wrapRoles(tank, healer, damage)
     }
 end
 
+local roleNames = {
+    [1] = "Tank",
+    [2] = "Heal",
+    [3] = "Damage",
+}
+
+function broker_cta.displayRoles(roles)
+    local text = ""
+    for i=1, #roles do
+        if roles[i] then
+            text = text .. roleNames[i] .. " "
+        end
+    end
+    if text == "" then
+        text = "None, select some in LFG window"
+    end
+    return text
+end
+
 local f = CreateFrame("frame")
 local UPDATEPERIOD = 5
 local elapsed = 0
@@ -87,7 +106,10 @@ end)
 
 function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
+    self:AddLine("Selected Roles", 0, 1, 0)
     local roles = broker_cta.getSelectedRoles()
+    self:AddLine(broker_cta.displayRoles(roles))
+
 
     self:AddLine("Dungeons", 0, 1, 0)
     broker_cta.displayList(self, broker_cta.filter(broker_cta.listDungeons(), roles))
