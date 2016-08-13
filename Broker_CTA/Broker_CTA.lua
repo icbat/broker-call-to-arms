@@ -100,8 +100,25 @@ f:SetScript("OnUpdate", function(self, elap)
     local roles = broker_cta.getSelectedRoles()
     local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
     local raids = broker_cta.filter(broker_cta.listRaids(), roles)
-    dataobj.text = "Dungeons: " .. #dungeons .. " Raids: " .. #raids
+    local displayText = ""
+    displayText = displayText .. "Dungeons: "
+    if #dungeons > 0 then
+        displayText = displayText .. broker_cta.greenText(#dungeons)
+    else
+        displayText = displayText .. #dungeons
+    end
+    displayText = displayText .. " Raids: "
+    if #raids > 0 then
+        displayText = displayText .. broker_cta.greenText(#raids)
+    else
+        displayText = displayText .. #raids
+    end
+    dataobj.text = displayText
 end)
+
+function broker_cta.greenText(text)
+    return "\124c0000FF00" .. text .. "\124r"
+end
 
 
 function dataobj:OnTooltipShow()
