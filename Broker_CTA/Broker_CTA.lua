@@ -1,13 +1,9 @@
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 
 local addonName = "Call To Arms"
-local _G
 local dataobj = ldb:NewDataObject(addonName, {
     type = "data source",
-    text = "Broker: Call to Arms",
-    OnClick = function(clickedframe, button)
-		_G.LFDMicroButton:GetScript("OnClick")(_G.LFDMicroButton, button)
-    end
+    text = "Broker: Call to Arms"
 })
 
 local broker_cta = {}
