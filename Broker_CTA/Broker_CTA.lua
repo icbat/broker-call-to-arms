@@ -79,21 +79,9 @@ f:SetScript("OnUpdate", function(self, elap)
     elapsed = 0
 
     local roles = broker_cta.getSelectedRoles()
-
-    local sum = 0
     local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
-    if dungeons ~= nil then
-        sum = sum + #dungeons
-    end
     local raids = broker_cta.filter(broker_cta.listRaids(), roles)
-    if raids ~= nil then
-        sum = sum + #raids
-    end
-    if sum == 0 then
-        dataobj.text = "No satchels"
-    else
-        dataobj.text = sum
-    end
+    dataobj.text = "Dungeons: " .. #dungeons .. " Raids: " .. #raids
 end)
 
 
