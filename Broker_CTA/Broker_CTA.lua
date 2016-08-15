@@ -84,11 +84,17 @@ local roleNames = {
     [3] = "Damage",
 }
 
+local roleColors = {
+    [1] = "003498db",
+    [2] = "0000f269",
+    [3] = "00e74c3c",
+}
+
 function broker_cta.displayRoles(roles)
     local text = ""
     for i=1, #roles do
         if roles[i] then
-            text = text .. roleNames[i] .. " "
+            text = text .. broker_cta.coloredText(roleNames[i], roleColors[i]) .. " "
         end
     end
     if text == "" then
@@ -111,35 +117,35 @@ f:SetScript("OnUpdate", function(self, elap)
     local displayText = ""
     displayText = displayText .. "Dungeons: "
     if #dungeons > 0 then
-        displayText = displayText .. broker_cta.greenText(#dungeons)
+        displayText = displayText .. broker_cta.coloredText(#dungeons, "0000FF00")
     else
         displayText = displayText .. #dungeons
     end
     displayText = displayText .. " Raids: "
     if #raids > 0 then
-        displayText = displayText .. broker_cta.greenText(#raids)
+        displayText = displayText .. broker_cta.coloredText(#raids, "0000FF00")
     else
         displayText = displayText .. #raids
     end
     dataobj.text = displayText
 end)
 
-function broker_cta.greenText(text)
-    return "\124c0000FF00" .. text .. "\124r"
+function broker_cta.coloredText(text, color)
+    return "\124c" .. color .. text .. "\124r"
 end
 
 
 function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
-    self:AddLine("Selected Roles", 0, 1, 0)
+    self:AddLine(" -- Selected Roles", 0.58, 0.65, 0.65)
     local roles = broker_cta.getSelectedRoles()
     self:AddLine(broker_cta.displayRoles(roles))
 
 
-    self:AddLine("Dungeons", 0, 1, 0)
+    self:AddLine(" -- Dungeons", 0.58, 0.65, 0.65)
     broker_cta.displayList(self, broker_cta.filter(broker_cta.listDungeons(), roles))
 
-    self:AddLine("Raids", 0, 1, 0)
+    self:AddLine(" -- Raids", 0.58, 0.65, 0.65)
     broker_cta.displayList(self, broker_cta.filter(broker_cta.listRaids(), roles))
 end
 
@@ -149,7 +155,7 @@ function broker_cta.displayList(self, instanceList)
     else
         for i=1,#instanceList do
             local rolesNeeded = broker_cta.extractRolesFromInstance(instanceList[i])
-            local text = "" .. instanceList[i]["name"] .. " : " ..  broker_cta.displayRoles(rolesNeeded)
+            local text = "" .. instanceList[i]["name"] .. "   " ..  broker_cta.displayRoles(rolesNeeded)
             self:AddLine(text, 1, 1, 1)
         end
     end
