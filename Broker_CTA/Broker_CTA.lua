@@ -64,30 +64,30 @@ end
 
 function broker_cta.wrapRoles(tank, healer, damage)
     return {
-        [1] = tank,
-        [2] = healer,
-        [3] = damage
+        tank,
+        healer,
+        damage
     }
 end
 
 function broker_cta.extractRolesFromInstance(instanceObject)
     return {
-        [1] = instanceObject["needsTank"],
-        [2] = instanceObject["needsHealer"],
-        [3] = instanceObject["needsDamage"],
+        instanceObject["needsTank"],
+        instanceObject["needsHealer"],
+        instanceObject["needsDamage"],
     }
 end
 
 local roleNames = {
-    [1] = "Tank",
-    [2] = "Heal",
-    [3] = "Damage",
+    "Tank",
+    "Heal",
+    "Damage",
 }
 
 local roleColors = {
-    [1] = "003498db",
-    [2] = "0000f269",
-    [3] = "00e74c3c",
+    "003498db",
+    "0000f269",
+    "00e74c3c",
 }
 
 function broker_cta.displayRoles(roles)
