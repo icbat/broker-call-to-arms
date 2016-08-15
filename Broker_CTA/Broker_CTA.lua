@@ -70,6 +70,14 @@ function broker_cta.wrapRoles(tank, healer, damage)
     }
 end
 
+function broker_cta.extractRolesFromInstance(instanceObject)
+    return {
+        [1] = instanceObject["needsTank"],
+        [2] = instanceObject["needsHealer"],
+        [3] = instanceObject["needsDamage"],
+    }
+end
+
 local roleNames = {
     [1] = "Tank",
     [2] = "Heal",
@@ -140,7 +148,9 @@ function broker_cta.displayList(self, instanceList)
         self:AddLine("No reward satchels found", 1, 1, 1)
     else
         for i=1,#instanceList do
-            self:AddLine(instanceList[i]["name"], 1, 1, 1)
+            local rolesNeeded = broker_cta.extractRolesFromInstance(instanceList[i])
+            local text = "" .. instanceList[i]["name"] .. " : " ..  broker_cta.displayRoles(rolesNeeded)
+            self:AddLine(text, 1, 1, 1)
         end
     end
 end
