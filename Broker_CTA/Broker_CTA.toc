@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms scanning and joining
 ## Author: @icbat
