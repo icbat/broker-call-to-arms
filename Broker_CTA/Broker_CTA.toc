@@ -1,8 +1,8 @@
 ## Interface: 70100
 ## Title: Broker: Call to Arms
-## Notes: Call to Arms scanning and joining
+## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 1
+## Version: 2
 
 ## Dependencies
 libs\LibStub\LibStub.lua
