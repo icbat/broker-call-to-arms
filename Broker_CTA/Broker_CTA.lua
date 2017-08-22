@@ -25,36 +25,33 @@ function broker_cta.list(listFunction, infoFunction)
     return result
 end
 
-function broker_cta.filter(instances, selectedRoles)
-    local result = {}
+function broker_cta.filter(instances)
+    local instancesNeedingTank = {}
+    local instancesNeedingHealer = {}
+    local instancesNeedingDPS = {}
     for i=1,#instances do
-        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp, secretFourthOption = GetLFGRoleShortageRewards(instances[i]["id"], 1)
-        local neededRoles = broker_cta.wrapRoles(needsTank, needsHealer, needsDamage)
-        if eligible and broker_cta.canFillNeed(selectedRoles, neededRoles) and broker_cta.rewardsAreWanted(itemCount, money, xp, secretFourthOption) then
-            result[#result + 1] = {
-                ["needsTank"] = needsTank,
-                ["needsHealer"] = needsHealer,
-                ["needsDamage"] = needsDamage,
-                ["name"] = instances[i]["name"],
-                ["id"] = instances[i]["id"]
-            }
+        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp = GetLFGRoleShortageRewards(instances[i]["id"], 1)
+        if eligible and broker_cta.rewardsAreWanted(itemCount, money, xp) then
+            if needsTank then
+                instancesNeedingTank[#instancesNeedingTank + 1] = instances[i]["name"]
+            end
+
+            if needsHealer then
+                instancesNeedingHealer[#instancesNeedingHealer + 1] = instances[i]["name"]
+            end
+
+            if needsDamage then
+                instancesNeedingDPS[#instancesNeedingDPS + 1] = instances[i]["name"]
+            end
+
         end
     end
-    return result
+
+    return instancesNeedingTank, instancesNeedingHealer, instancesNeedingDPS
 end
 
-function broker_cta.canFillNeed(selectedRoles, neededRoles)
-    for i=1, #selectedRoles do
-        if selectedRoles[i] and neededRoles[i] then
-            return true
-        end
-    end
-    return false
-end
-
--- secretFourthOption is literally undocumented. Including it here, but it may not be worth including, or it may not even be a reward!
-function broker_cta.rewardsAreWanted(itemCount, money, xp, secretFourthOption)
-    return (itemCount ~= 0 or money ~= 0 or xp ~= 0 or secretFourthOption ~= 0)
+function broker_cta.rewardsAreWanted(itemCount, money, xp)
+    return (itemCount ~= 0 or money ~= 0 or xp ~= 0)
 end
 
 function broker_cta.getSelectedRoles()
@@ -67,14 +64,6 @@ function broker_cta.wrapRoles(tank, healer, damage)
         tank,
         healer,
         damage
-    }
-end
-
-function broker_cta.extractRolesFromInstance(instanceObject)
-    return {
-        instanceObject["needsTank"],
-        instanceObject["needsHealer"],
-        instanceObject["needsDamage"],
     }
 end
 
@@ -111,21 +100,17 @@ f:SetScript("OnUpdate", function(self, elap)
 	if elapsed < UPDATEPERIOD then return end
     elapsed = 0
 
-    local roles = broker_cta.getSelectedRoles()
-    local dungeons = broker_cta.filter(broker_cta.listDungeons(), roles)
-    local raids = broker_cta.filter(broker_cta.listRaids(), roles)
+    local tank, healer, dps = broker_cta.filter(TableConcat(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
     local displayText = ""
-    displayText = displayText .. "Dungeons: "
-    if #dungeons > 0 then
-        displayText = displayText .. broker_cta.coloredText(#dungeons, "0000FF00")
-    else
-        displayText = displayText .. #dungeons
+    if canBeTank then
+        displayText = displayText .. broker_cta.coloredText(roleNames[1] .. " " .. #tank .. " ", roleColors[1])
     end
-    displayText = displayText .. " Raids: "
-    if #raids > 0 then
-        displayText = displayText .. broker_cta.coloredText(#raids, "0000FF00")
-    else
-        displayText = displayText .. #raids
+    if canBeHealer then
+        displayText = displayText .. broker_cta.coloredText(roleNames[2] .. " " .. #healer .. " ", roleColors[2])
+    end
+    if canBeDPS then
+        displayText = displayText .. broker_cta.coloredText(roleNames[3] .. " " .. #dps .. " ", roleColors[3])
     end
     dataobj.text = displayText
 end)
@@ -141,24 +126,43 @@ function dataobj:OnTooltipShow()
     local roles = broker_cta.getSelectedRoles()
     self:AddLine(broker_cta.displayRoles(roles))
 
+    local tank, healer, dps = broker_cta.filter(TableConcat(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
-    self:AddLine(" -- Dungeons", 0.58, 0.65, 0.65)
-    broker_cta.displayList(self, broker_cta.filter(broker_cta.listDungeons(), roles))
+    if canBeTank then
+        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[1], roleColors[1]))
+        broker_cta.displayList(self, tank)
+    end
 
-    self:AddLine(" -- Raids", 0.58, 0.65, 0.65)
-    broker_cta.displayList(self, broker_cta.filter(broker_cta.listRaids(), roles))
+    if canBeHealer then
+        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[2], roleColors[2]))
+        broker_cta.displayList(self, healer)
+    end
+
+    if canBeDPS then
+        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[3], roleColors[3]))
+        broker_cta.displayList(self, dps)
+    end
+
 end
 
 function broker_cta.displayList(self, instanceList)
     if instanceList == nil or #instanceList == 0 then
         self:AddLine("No reward satchels found", 1, 1, 1)
     else
+
         for i=1,#instanceList do
-            local rolesNeeded = broker_cta.extractRolesFromInstance(instanceList[i])
-            local text = "" .. instanceList[i]["name"] .. "   " ..  broker_cta.displayRoles(rolesNeeded)
+            local text = instanceList[i]
             self:AddLine(text, 1, 1, 1)
         end
     end
+end
+
+function TableConcat(t1,t2)
+    for i=1,#t2 do
+        t1[#t1+1] = t2[i]
+    end
+    return t1
 end
 
 function dataobj:OnEnter()
