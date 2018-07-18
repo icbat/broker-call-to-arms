@@ -1,4 +1,4 @@
-## Interface: 70100
+## Interface: 80000
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
