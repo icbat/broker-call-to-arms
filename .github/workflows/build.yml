@@ -20,14 +20,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
-    - name: What is here
-      run: ls -l
-
-    # Runs a set of commands using the runners shell
-    - name: Where am I
-      run: pwd
-
     # Runs a set of commands using the runners shell
     - name: Do I even have Zip
-      run: zip --help
+      run: zip -r `date -u +"Broker_CTA_%Y-%m-%dT%H-%M-%S_%Z"`.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
