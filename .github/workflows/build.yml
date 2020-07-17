@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
   
     - name: Zip it good
-      run: zip -9 -r Broker_CTA_${{env.GITHUB_RUN_ID}}.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
+      run: zip -9 -r Broker_CTA_`$GITHUB_RUN_ID`.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
       
     - name: What is here
       run: ls -lsa
