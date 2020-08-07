@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
   
     - name: Zip it good
-      run: zip -9 -r Broker_CTA_`$GITHUB_RUN_ID`.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
+      run: zip -9 -r Broker_CTA.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
       
     - name: What is here
       run: ls -lsa
@@ -30,7 +30,7 @@ jobs:
       uses: icbat/wow-addon-upload-action@v0.0.4
       with:
         id: 25623
-        zipFilePath: Broker_CTA_`$GITHUB_RUN_ID`.zip
+        zipFilePath: Broker_CTA.zip
         compatible: 80307,80300,80205
         version: ${{ steps.get_versions.outputs.addon_version }}
         apiKey: ${{ secrets.WOW_INTERFACE }}
