@@ -28,5 +28,7 @@ jobs:
       
     - name: Parse WoW Addon Verions
       uses: icbat/parse-wow-addon-version@v0.0.1
+      with:
+        tocfile:  Broker_CTA/Broker_CTA.toc
 
 
