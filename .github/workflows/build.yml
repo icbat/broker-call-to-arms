@@ -33,5 +33,5 @@ jobs:
         tocfile:  Broker_CTA/Broker_CTA.toc
     
     - name: Echo Verisons
-      run: echo ${{ steps.get_versions.supported_version }} ${{ steps.get_versions.addon_version }}
+      run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
 
