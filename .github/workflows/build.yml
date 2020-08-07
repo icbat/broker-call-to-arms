@@ -25,4 +25,8 @@ jobs:
       
     - name: What is here
       run: ls -lsa
+      
+    - name: Parse WoW Addon Verions
+      uses: icbat/parse-wow-addon-version@v0.0.1
+
 
