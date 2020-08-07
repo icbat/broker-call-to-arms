@@ -31,6 +31,6 @@ jobs:
       with:
         id: 25623
         zipFilePath: Broker_CTA_`$GITHUB_RUN_ID`.zip
-        compatible: 80000,80307,80300,80205
+        compatible: 80307,80300,80205
         version: ${{ steps.get_versions.outputs.addon_version }}
         apiKey: ${{ secrets.WOW_INTERFACE }}
