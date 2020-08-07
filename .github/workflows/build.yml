@@ -27,7 +27,7 @@ jobs:
       run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
 
     - name: Upload to WoW Interface
-      uses: icbat/wow-addon-upload-action@v0.0.2
+      uses: icbat/wow-addon-upload-action@v0.0.3
       with:
         id: 12345
         zipFilePath: Broker_CTA_`$GITHUB_RUN_ID`.zip
