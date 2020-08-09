@@ -9,13 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout the code
+      uses: actions/checkout@v2
   
     - name: Zip it good
       run: zip -9 -r Broker_CTA.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
       
-    - name: What is here
-      run: ls -lsa
+#     - name: What is here (for debugging)
+#       run: ls -lsa
       
     - name: Parse WoW Addon Verions
       id: get_versions
@@ -23,8 +24,8 @@ jobs:
       with:
         tocfile:  Broker_CTA/Broker_CTA.toc
     
-    - name: Echo Verisons
-      run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
+#     - name: Echo Verisons
+#       run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
 
     - name: Upload to WoW Interface
       uses: icbat/wow-addon-upload-action@v0.0.4
