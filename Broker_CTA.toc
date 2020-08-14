@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
