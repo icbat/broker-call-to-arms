@@ -141,38 +141,45 @@ end
 
 function broker_cta.displayList(self, instanceList)
     if instanceList == nil or #instanceList == 0 then
-        self:AddLine("No reward satchels found", 1, 1, 1)
+        self:AddLine("No reward satchels found")
     else
 
         for i=1,#instanceList do
             local text = instanceList[i]
-            self:AddLine(text, 1, 1, 1)
+            self:AddLine(text)
         end
     end
 end
 
 local function build_tooltip(self)
-    self:AddLine(addonName)
-    self:AddLine(" -- Selected Roles")
+    self:AddHeader(addonName)
+    self:AddLine()
+
+    self:AddLine("Selected Roles")
     local roles = broker_cta.getSelectedRoles()
     self:AddLine(broker_cta.displayRoles(roles))
+    self:AddLine()
+    self:AddSeparator()
 
     local tank, healer, dps = broker_cta.filter(concatTables(broker_cta.listDungeons(), broker_cta.listRaids()))
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
     if canBeTank then
-        self:AddLine(" -- " .. coloredText(roleNames[1], roleColors[1]))
+        self:AddLine(coloredText(roleNames[1], roleColors[1]))
         broker_cta.displayList(self, tank)
+        self:AddLine()
     end
 
     if canBeHealer then
-        self:AddLine(" -- " .. coloredText(roleNames[2], roleColors[2]))
+        self:AddLine(coloredText(roleNames[2], roleColors[2]))
         broker_cta.displayList(self, healer)
+        self:AddLine()
     end
 
     if canBeDPS then
-        self:AddLine(" -- " .. coloredText(roleNames[3], roleColors[3]))
+        self:AddLine(coloredText(roleNames[3], roleColors[3]))
         broker_cta.displayList(self, dps)
+        self:AddLine()
     end
 end
 
