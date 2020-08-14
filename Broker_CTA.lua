@@ -92,14 +92,7 @@ function broker_cta.displayRoles(roles)
     return text
 end
 
-local f = CreateFrame("frame")
-local UPDATEPERIOD = 5
-local elapsed = 0
-f:SetScript("OnUpdate", function(self, elap)
-	elapsed = elapsed + elap
-	if elapsed < UPDATEPERIOD then return end
-    elapsed = 0
-
+function broker_cta.update()
     local tank, healer, dps = broker_cta.filter(TableConcat(broker_cta.listDungeons(), broker_cta.listRaids()))
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
     local displayText = ""
@@ -113,7 +106,20 @@ f:SetScript("OnUpdate", function(self, elap)
         displayText = displayText .. broker_cta.coloredText(roleNames[3] .. " " .. #dps .. " ", roleColors[3])
     end
     dataobj.text = displayText
+end
+
+local f = CreateFrame("frame")
+local UPDATEPERIOD = 5
+local elapsed = 0
+f:SetScript("OnUpdate", function(self, elap)
+    elapsed = elapsed + elap
+	if elapsed < UPDATEPERIOD then return end
+    elapsed = 0
+    broker_cta.update()
 end)
+
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", broker_cta.update)
 
 function broker_cta.coloredText(text, color)
     return "\124c" .. color .. text .. "\124r"
