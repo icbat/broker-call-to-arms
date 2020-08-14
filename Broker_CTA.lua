@@ -146,6 +146,10 @@ function dataobj:OnLeave()
 	GameTooltip:Hide()
 end
 
+function dataobj:OnClick()
+    ToggleLFDParentFrame()
+end
+
 function dataobj:OnTooltipShow()
 	self:AddLine(addonName)
     self:AddLine(" -- Selected Roles", 0.58, 0.65, 0.65)
