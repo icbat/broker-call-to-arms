@@ -1,3 +1,21 @@
+-- Dev helper functions
+local function starts_with(str, start)
+    if type(str) ~= "string" then return end
+    return str:sub(1, #start) == start
+end
+
+local function print_keys(table, start)
+    for k, _ in pairs(table) do
+        if starts_with(k, start) then
+            print(k)
+        end
+    end
+    print('---')
+end
+---
+
+local LibQTip = LibStub('LibQTip-1.0')
+
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 
 local addonName = "Call To Arms"
@@ -133,26 +151,9 @@ function broker_cta.displayList(self, instanceList)
     end
 end
 
--- tooltip/broker object settings
-function dataobj:OnEnter()
-	GameTooltip:SetOwner(self, "ANCHOR_NONE")
-	GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
-	GameTooltip:ClearLines()
-	dataobj.OnTooltipShow(GameTooltip)
-	GameTooltip:Show()
-end
-
-function dataobj:OnLeave()
-	GameTooltip:Hide()
-end
-
-function dataobj:OnClick()
-    ToggleLFDParentFrame()
-end
-
-function dataobj:OnTooltipShow()
-	self:AddLine(addonName)
-    self:AddLine(" -- Selected Roles", 0.58, 0.65, 0.65)
+local function build_tooltip(self)
+    self:AddLine(addonName)
+    self:AddLine(" -- Selected Roles")
     local roles = broker_cta.getSelectedRoles()
     self:AddLine(broker_cta.displayRoles(roles))
 
@@ -173,6 +174,48 @@ function dataobj:OnTooltipShow()
         self:AddLine(" -- " .. coloredText(roleNames[3], roleColors[3]))
         broker_cta.displayList(self, dps)
     end
+end
+
+
+local function OnRelease(self)
+    LibQTip:Release(self.tooltip)
+    self.tooltip = nil
+end
+
+local function anchor_OnEnter(self)
+    if self.tooltip then
+        LibQTip:Release(self.tooltip)
+        self.tooltip = nil
+    end
+
+    -- Acquire a tooltip with 3 columns, respectively aligned to left, center and right
+    local tooltip = LibQTip:Acquire("FooBarTooltip", 3, "LEFT", "CENTER", "RIGHT")
+    self.tooltip = tooltip
+    tooltip.OnRelease = OnRelease
+    tooltip.OnLeave = OnLeave
+    tooltip:SetAutoHideDelay(.1, self)
+
+    build_tooltip(tooltip)
+
+    -- Use smart anchoring code to anchor the tooltip to our frame
+    tooltip:SmartAnchorTo(self)
+
+    -- Show it, et voilà !
+    tooltip:Show()
+end
+
+
+-- tooltip/broker object settings
+function dataobj:OnEnter()
+    anchor_OnEnter(self)
+end
+
+function dataobj:OnLeave()
+	-- Nothing to do. Needs to be defined for some display addons apparently
+end
+
+function dataobj:OnClick()
+    ToggleLFDParentFrame()
 end
 
 -- invisible frame for updating/hooking events
