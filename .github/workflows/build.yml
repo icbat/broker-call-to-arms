@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
   
     - name: Zip it good
-      run: zip -9 -r Broker_CTA.zip $GITHUB_WORKSPACE/Broker_CTA/* LICENSE README.md
+      run: zip -9 -r Broker_CTA.zip Broker_CTA.lua Broker.CTA.toc LICENSE README.md
       
 #     - name: What is here (for debugging)
 #       run: ls -lsa
@@ -22,7 +22,7 @@ jobs:
       id: get_versions
       uses: icbat/parse-wow-addon-version@v0.0.1
       with:
-        tocfile:  Broker_CTA/Broker_CTA.toc
+        tocfile:  Broker_CTA.toc
     
 #     - name: Echo Verisons
 #       run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
