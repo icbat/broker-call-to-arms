@@ -6,6 +6,19 @@ local dataobj = ldb:NewDataObject(addonName, {
     text = "Broker: Call to Arms"
 })
 
+-- utils/helpers
+local function concatTables(t1,t2)
+    for i=1,#t2 do
+        t1[#t1+1] = t2[i]
+    end
+    return t1
+end
+
+local function coloredText(text, color)
+    return "\124c" .. color .. text .. "\124r"
+end
+
+-- Broker CTA / addon-specific functions
 local broker_cta = {}
 
 function broker_cta.listDungeons()
@@ -83,7 +96,7 @@ function broker_cta.displayRoles(roles)
     local text = ""
     for i=1, #roles do
         if roles[i] then
-            text = text .. broker_cta.coloredText(roleNames[i], roleColors[i]) .. " "
+            text = text .. coloredText(roleNames[i], roleColors[i]) .. " "
         end
     end
     if text == "" then
@@ -93,63 +106,19 @@ function broker_cta.displayRoles(roles)
 end
 
 function broker_cta.update()
-    local tank, healer, dps = broker_cta.filter(TableConcat(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local tank, healer, dps = broker_cta.filter(concatTables(broker_cta.listDungeons(), broker_cta.listRaids()))
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
     local displayText = ""
     if canBeTank then
-        displayText = displayText .. broker_cta.coloredText(roleNames[1] .. " " .. #tank .. " ", roleColors[1])
+        displayText = displayText .. coloredText(roleNames[1] .. " " .. #tank .. " ", roleColors[1])
     end
     if canBeHealer then
-        displayText = displayText .. broker_cta.coloredText(roleNames[2] .. " " .. #healer .. " ", roleColors[2])
+        displayText = displayText .. coloredText(roleNames[2] .. " " .. #healer .. " ", roleColors[2])
     end
     if canBeDPS then
-        displayText = displayText .. broker_cta.coloredText(roleNames[3] .. " " .. #dps .. " ", roleColors[3])
+        displayText = displayText .. coloredText(roleNames[3] .. " " .. #dps .. " ", roleColors[3])
     end
     dataobj.text = displayText
-end
-
-local f = CreateFrame("frame")
-local UPDATEPERIOD = 5
-local elapsed = 0
-f:SetScript("OnUpdate", function(self, elap)
-    elapsed = elapsed + elap
-	if elapsed < UPDATEPERIOD then return end
-    elapsed = 0
-    broker_cta.update()
-end)
-
-f:RegisterEvent("PLAYER_ENTERING_WORLD")
-f:SetScript("OnEvent", broker_cta.update)
-
-function broker_cta.coloredText(text, color)
-    return "\124c" .. color .. text .. "\124r"
-end
-
-
-function dataobj:OnTooltipShow()
-	self:AddLine(addonName)
-    self:AddLine(" -- Selected Roles", 0.58, 0.65, 0.65)
-    local roles = broker_cta.getSelectedRoles()
-    self:AddLine(broker_cta.displayRoles(roles))
-
-    local tank, healer, dps = broker_cta.filter(TableConcat(broker_cta.listDungeons(), broker_cta.listRaids()))
-    local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
-
-    if canBeTank then
-        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[1], roleColors[1]))
-        broker_cta.displayList(self, tank)
-    end
-
-    if canBeHealer then
-        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[2], roleColors[2]))
-        broker_cta.displayList(self, healer)
-    end
-
-    if canBeDPS then
-        self:AddLine(" -- " .. broker_cta.coloredText(roleNames[3], roleColors[3]))
-        broker_cta.displayList(self, dps)
-    end
-
 end
 
 function broker_cta.displayList(self, instanceList)
@@ -164,13 +133,7 @@ function broker_cta.displayList(self, instanceList)
     end
 end
 
-function TableConcat(t1,t2)
-    for i=1,#t2 do
-        t1[#t1+1] = t2[i]
-    end
-    return t1
-end
-
+-- tooltip/broker object settings
 function dataobj:OnEnter()
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
 	GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
@@ -182,3 +145,42 @@ end
 function dataobj:OnLeave()
 	GameTooltip:Hide()
 end
+
+function dataobj:OnTooltipShow()
+	self:AddLine(addonName)
+    self:AddLine(" -- Selected Roles", 0.58, 0.65, 0.65)
+    local roles = broker_cta.getSelectedRoles()
+    self:AddLine(broker_cta.displayRoles(roles))
+
+    local tank, healer, dps = broker_cta.filter(concatTables(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
+
+    if canBeTank then
+        self:AddLine(" -- " .. coloredText(roleNames[1], roleColors[1]))
+        broker_cta.displayList(self, tank)
+    end
+
+    if canBeHealer then
+        self:AddLine(" -- " .. coloredText(roleNames[2], roleColors[2]))
+        broker_cta.displayList(self, healer)
+    end
+
+    if canBeDPS then
+        self:AddLine(" -- " .. coloredText(roleNames[3], roleColors[3]))
+        broker_cta.displayList(self, dps)
+    end
+end
+
+-- invisible frame for updating/hooking events
+local f = CreateFrame("frame")
+local UPDATEPERIOD = 5
+local elapsed = 0
+f:SetScript("OnUpdate", function(self, elap)
+    elapsed = elapsed + elap
+	if elapsed < UPDATEPERIOD then return end
+    elapsed = 0
+    broker_cta.update()
+end)
+
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", broker_cta.update)
