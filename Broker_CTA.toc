@@ -12,3 +12,5 @@ libs/LibQTip-1.0.lua
 
 ## This addon
 Broker_CTA.lua
+Display.lua
+Broker.lua
