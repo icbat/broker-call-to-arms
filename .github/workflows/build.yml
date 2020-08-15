@@ -3,6 +3,8 @@ name: Build and Upload
 on:
   workflow_dispatch:
     branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
@@ -32,6 +34,6 @@ jobs:
       with:
         id: 25623
         zipFilePath: Broker_CTA.zip
-        compatible: 80307,80300,80205,90001
+        compatible: 80300,80205,90000
         version: ${{ steps.get_versions.outputs.addon_version }}
         apiKey: ${{ secrets.WOW_INTERFACE }}

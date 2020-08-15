@@ -1,4 +1,5 @@
 -- https://phanx.net/addons/tutorials/localize
+
 local _, namespace = ...
 
 local L = setmetatable({}, {
