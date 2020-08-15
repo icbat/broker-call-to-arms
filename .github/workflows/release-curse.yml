@@ -3,8 +3,8 @@ name: Release to Curse
 on:
   workflow_dispatch:
     branches: [ master ]
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
