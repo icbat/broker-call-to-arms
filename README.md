@@ -6,6 +6,7 @@ A Data Broker addon for showing you what dungeons/Looking For Raids will get you
 Get it on [WoW Interface](https://wowinterface.com/downloads/info25623-BrokerCalltoArms), [Curse](https://www.curseforge.com/wow/addons/broker-call-arms), or use the [Cursebreaker tool](https://github.com/AcidWeb/CurseBreaker) (recommended)
 
 ## Changelog
+- Now shows you all roles, even those your current character cannot queue for
 - Verified everything works with Shadowlands
 - Tooltip now stays up if you mouse over it
 - Fixes the 5 second delay between logging in and seeing anything useful from this addon
