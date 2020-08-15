@@ -27,8 +27,7 @@ local function displayRoles(roles)
     return text
 end
 
-
-local function displayList(self, instanceList)
+local function displayList(self, instanceList, queued_ids)
     if instanceList == nil or #instanceList == 0 then
         self:AddLine("No reward satchels found")
         return
@@ -36,7 +35,15 @@ local function displayList(self, instanceList)
 
     for i=1,#instanceList do
         local text = instanceList[i]["name"]
-        self:AddLine(text)
+        local queued = coloredText("X", "00ff0000")
+
+        for _, k in pairs(queued_ids) do
+            if k == instanceList[i]["instance_id"] then
+                queued = coloredText("O", "0000ff00")
+            end
+        end
+        -- TODO this would be a great place to use QTip's multiple column support. When I tried, I couldn't get the layout right.
+        self:AddLine(queued .. " " .. text)
     end
 end
 
@@ -52,23 +59,24 @@ function broker_cta_display.build_tooltip(self)
     self:AddSeparator()
 
     local tank, healer, dps = broker_cta.split_by_role(broker_cta.build_list())
+    local queued_ids = broker_cta.get_queued_instance_ids()
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
     if canBeTank then
         self:AddLine(coloredText(roleNames[1], roleColors[1]))
-        displayList(self, tank)
+        displayList(self, tank, queued_ids)
         self:AddLine()
     end
 
     if canBeHealer then
         self:AddLine(coloredText(roleNames[2], roleColors[2]))
-        displayList(self, healer)
+        displayList(self, healer, queued_ids)
         self:AddLine()
     end
 
     if canBeDPS then
         self:AddLine(coloredText(roleNames[3], roleColors[3]))
-        displayList(self, dps)
+        displayList(self, dps, queued_ids)
         self:AddLine()
     end
 end
