@@ -11,7 +11,7 @@ local function wrapRoles(tank, healer, damage)
     return {tank, healer, damage}
 end
 
-local roleNames = {L["Tank"], L["Heal"], L["Damage"]}
+local roleNames = {_G["TANK"], _G["HEALER"], _G["DAMAGER"]}
 
 local roleColors = {"003498db", "0000f269", "00e74c3c"}
 
@@ -21,7 +21,7 @@ local function displayList(self, instanceList, queued_ids)
         return
     end
 
-    for i=1,#instanceList do
+    for i = 1, #instanceList do
         local text = instanceList[i]["name"]
         local queued = ""
 
@@ -81,6 +81,3 @@ function broker_cta_display.build_label()
     end
     return displayText
 end
-
-
-
