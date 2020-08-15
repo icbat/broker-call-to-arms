@@ -5,10 +5,9 @@ local function starts_with(str, start)
 end
 
 local function print_keys(table, start)
-    for k, _ in pairs(table) do
-        if starts_with(k, start) then
-            print(k)
-        end
+    for k, v in pairs(table) do
+        print(k)
+        print(v)
     end
     print('---')
 end
@@ -26,13 +25,50 @@ end
 local function fetch_lfx_list(listFunction, infoFunction)
     local result = {}
     for i = 1, listFunction() do
+        -- https://wow.gamepedia.com/API_GetRFDungeonInfo for example of everything you can get here
         local id, name = infoFunction(i)
         result[i] = {
-            ["id"] = id,
+            ["instance_id"] = id,
             ["name"] = name
         }
     end
     return result
+end
+
+local function rewards_exist(itemCount, money, xp)
+    return (itemCount ~= 0 or money ~= 0 or xp ~= 0)
+end
+
+-- wraps Blizzard's multiple returns into a table that we care about
+local function build_satchel_object(instance_id, name)
+    local shortage_severity = 1
+
+    -- https://wow.gamepedia.com/API_GetLFGRoleShortageRewards
+    local eligible, needs_tank, needs_healer, needs_damage, items, money, xp = GetLFGRoleShortageRewards(instance_id, shortage_severity)
+
+    return {
+        instance_id = instance_id;
+        name = name;
+        eligible = eligible;
+        needs_tank = needs_tank;
+        needs_healer = needs_healer;
+        needs_damage = needs_damage;
+        rewards = rewards_exist(items, money, xp);
+    }
+end
+
+local function filter_interesting_dungeons(instances)
+    local filtered_instances = {}
+
+    for i = 1, #instances do
+        local satchel = build_satchel_object(instances[i]["instance_id"], instances[i]["name"])
+        if satchel["eligible"] and satchel["rewards"] then
+            -- print_keys(satchel)
+            filtered_instances[#filtered_instances + 1] = satchel
+        end
+    end
+
+    return filtered_instances
 end
 
 
@@ -42,31 +78,27 @@ broker_cta = {}
 function broker_cta.build_list()
     local dungeons = fetch_lfx_list(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
     local raids = fetch_lfx_list(GetNumRFDungeons, GetRFDungeonInfo)
-    return concatTables(dungeons, raids)
+    return filter_interesting_dungeons(concatTables(dungeons, raids))
 end
 
-function broker_cta.filter(instances)
-    local instancesNeedingTank = {}
-    local instancesNeedingHealer = {}
-    local instancesNeedingDPS = {}
+function broker_cta.split_by_role(instances)
+    local tank = {}
+    local healer = {}
+    local dps = {}
+
     for i=1,#instances do
-        local eligible, needsTank, needsHealer, needsDamage, itemCount, money, xp = GetLFGRoleShortageRewards(instances[i]["id"], 1)
-        if eligible and broker_cta.rewardsAreWanted(itemCount, money, xp) then
-            if needsTank then
-                instancesNeedingTank[#instancesNeedingTank + 1] = instances[i]["name"]
-            end
-
-            if needsHealer then
-                instancesNeedingHealer[#instancesNeedingHealer + 1] = instances[i]["name"]
-            end
-
-            if needsDamage then
-                instancesNeedingDPS[#instancesNeedingDPS + 1] = instances[i]["name"]
-            end
+        if instances[i]["needs_tank"] then
+            tank[#tank + 1] = instances[i]
+        end
+        if instances[i]["needs_healer"] then
+            healer[#healer + 1] = instances[i]
+        end
+        if instances[i]["needs_damage"] then
+            dps[#dps + 1] = instances[i]
         end
     end
 
-    return instancesNeedingTank, instancesNeedingHealer, instancesNeedingDPS
+    return tank, healer, dps
 end
 
 function broker_cta.rewardsAreWanted(itemCount, money, xp)

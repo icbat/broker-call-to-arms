@@ -35,7 +35,7 @@ local function displayList(self, instanceList)
     end
 
     for i=1,#instanceList do
-        local text = instanceList[i]
+        local text = instanceList[i]["name"]
         self:AddLine(text)
     end
 end
@@ -51,7 +51,7 @@ function broker_cta_display.build_tooltip(self)
     self:AddLine()
     self:AddSeparator()
 
-    local tank, healer, dps = broker_cta.filter(broker_cta.build_list())
+    local tank, healer, dps = broker_cta.split_by_role(broker_cta.build_list())
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
     if canBeTank then
@@ -74,7 +74,7 @@ function broker_cta_display.build_tooltip(self)
 end
 
 function broker_cta_display.build_label()
-    local tank, healer, dps = broker_cta.filter(broker_cta.build_list())
+    local tank, healer, dps = broker_cta.split_by_role(broker_cta.build_list())
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
     local displayText = ""
     if canBeTank then
