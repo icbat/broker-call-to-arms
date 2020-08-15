@@ -1,4 +1,4 @@
-name: Build and Release to Curse
+name: Release to Curse
 
 on:
   workflow_dispatch:

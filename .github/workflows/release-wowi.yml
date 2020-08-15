@@ -1,4 +1,4 @@
-name: Build and Release to WoW Interface
+name: Release to WoW Interface
 
 on:
   workflow_dispatch:
