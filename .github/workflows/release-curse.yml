@@ -17,23 +17,14 @@ jobs:
     - name: Create 'dist' folder
       run: mkdir Broker_CTA/
 
-    - name: What is here (for debugging)
-      run: ls -lsa
-
     - name: Put everything into a folder
       run: cp Broker_CTA.lua Broker.lua Display.lua Localization.lua Broker_CTA.toc LICENSE README.md Broker_CTA/
-
+  
+    - name: Zip it good
+      run: zip -9 -r Broker_CTA.zip Broker_CTA/
+      
     - name: What is here (for debugging)
       run: ls -lsa
-
-    - name: What is here (for debugging)
-      run: ls -lsa Broker_CTA/
-  
-    # - name: Zip it good
-    #   run: zip -9 -r Broker_CTA.zip Broker_CTA/
-      
-    # - name: What is here (for debugging)
-    #   run: ls -lsa
       
     # - name: Upload to CurseForge
     #   uses: itsmeow/curseforge-upload@v2
