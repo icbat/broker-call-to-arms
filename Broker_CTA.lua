@@ -14,24 +14,35 @@ local function print_keys(table, start)
 end
 ---
 
+
+local function concatTables(t1, t2)
+    for i = 1, #t2 do
+        t1[#t1 + 1] = t2[i]
+    end
+    return t1
+end
+
+-- the list function returns a list of IDs, the info function gets you all the info about that raid/dungeon
+local function fetch_lfx_list(listFunction, infoFunction)
+    local result = {}
+    for i = 1, listFunction() do
+        local id, name = infoFunction(i)
+        result[i] = {
+            ["id"] = id,
+            ["name"] = name
+        }
+    end
+    return result
+end
+
+
 -- Broker CTA / addon-specific functions
 broker_cta = {}
 
-function broker_cta.listDungeons()
-   return broker_cta.list(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
-end
-
-function broker_cta.listRaids()
-   return broker_cta.list(GetNumRFDungeons, GetRFDungeonInfo)
-end
-
-function broker_cta.list(listFunction, infoFunction)
-    local result = {}
-    for i = 1, listFunction() do
-       local id, name = infoFunction(i)
-       result[i] = {["id"] = id, ["name"] = name}
-    end
-    return result
+function broker_cta.build_list()
+    local dungeons = fetch_lfx_list(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
+    local raids = fetch_lfx_list(GetNumRFDungeons, GetRFDungeonInfo)
+    return concatTables(dungeons, raids)
 end
 
 function broker_cta.filter(instances)
@@ -52,7 +63,6 @@ function broker_cta.filter(instances)
             if needsDamage then
                 instancesNeedingDPS[#instancesNeedingDPS + 1] = instances[i]["name"]
             end
-
         end
     end
 
