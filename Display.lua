@@ -11,7 +11,7 @@ local function wrapRoles(tank, healer, damage)
     return {tank, healer, damage}
 end
 
-local roleNames = {L["Tank"], L["Heal"], L["Damage"]}
+local roleNames = {_G["TANK"], _G["HEALER"], _G["DAMAGER"]}
 
 local roleColors = {"003498db", "0000f269", "00e74c3c"}
 

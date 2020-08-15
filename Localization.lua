@@ -25,9 +25,6 @@ end
 
 -- if LOCALE == "deDE" then
 --     -- German translations go here
---     L["Tank"] = "German for Tank"
---     L["Heal"] = "German for Healer"
---     L["Damage"] = "German for Damage Dealer"
 --     L["Q"] = "A German abbreviation for being Queued"
 --     L["No reward satchels found"] = "German for 'there are no rewards available right now'"
 --     return
