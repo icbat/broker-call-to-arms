@@ -3,10 +3,6 @@ broker_cta_display = {}
 local ADDON, namespace = ...
 local L = namespace.L
 
-local function wrapRoles(tank, healer, damage)
-    return {tank, healer, damage}
-end
-
 local roleNames = {_G["TANK"], _G["HEALER"], _G["DAMAGER"]}
 
 local roleColors = {"003498db", "0000f269", "00e74c3c"}
@@ -24,12 +20,12 @@ end
 
 local function displayList(self, instanceList, is_eligible, queued_ids)
     if instanceList == nil or #instanceList == 0 then
-        self:AddLine("", coloredText(L["No reward satchels found"], grey))
+        self:AddLine("", coloredText("  " .. L["No reward satchels found"], grey))
         return
     end
 
     for i = 1, #instanceList do
-        local text = coloredText(instanceList[i]["name"], white, is_eligible)
+        local text = coloredText("  " .. instanceList[i]["name"], white, is_eligible)
         local queued = ""
 
         for _, k in pairs(queued_ids) do
