@@ -21,8 +21,8 @@ local function concatTables(t1, t2)
     return t1
 end
 
--- the list function returns a list of IDs, the info function gets you all the info about that raid/dungeon
-local function fetch_lfx_list(listFunction, infoFunction)
+-- returns names and ids for all the instances found with listFunction, populated w/ infoFunction
+local function fetch_lfx_names(listFunction, infoFunction)
     local result = {}
     for i = 1, listFunction() do
         -- https://wow.gamepedia.com/API_GetRFDungeonInfo for example of everything you can get here
@@ -76,8 +76,8 @@ end
 broker_cta = {}
 
 function broker_cta.build_list()
-    local dungeons = fetch_lfx_list(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
-    local raids = fetch_lfx_list(GetNumRFDungeons, GetRFDungeonInfo)
+    local dungeons = fetch_lfx_names(GetNumRandomDungeons, GetLFGRandomDungeonInfo)
+    local raids = fetch_lfx_names(GetNumRFDungeons, GetRFDungeonInfo)
     return filter_interesting_dungeons(concatTables(dungeons, raids))
 end
 
@@ -101,7 +101,17 @@ function broker_cta.split_by_role(instances)
     return tank, healer, dps
 end
 
-function broker_cta.rewardsAreWanted(itemCount, money, xp)
-    return (itemCount ~= 0 or money ~= 0 or xp ~= 0)
+function broker_cta.get_queued_instance_ids()
+    local instance_ids = {}
+
+    for id, _ in pairs(GetLFGQueuedList(1)) do
+        instance_ids[#instance_ids + 1] = id
+    end
+
+    for id, _ in pairs(GetLFGQueuedList(3)) do
+        instance_ids[#instance_ids + 1] = id
+    end
+
+    return instance_ids
 end
 
