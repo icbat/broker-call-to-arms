@@ -29,32 +29,34 @@ end
 
 local function displayList(self, instanceList, queued_ids)
     if instanceList == nil or #instanceList == 0 then
-        self:AddLine("No reward satchels found")
+        self:AddLine("", "No reward satchels found")
         return
     end
 
     for i=1,#instanceList do
         local text = instanceList[i]["name"]
-        local queued = coloredText("X", "00ff0000")
+        local queued = ""
 
         for _, k in pairs(queued_ids) do
             if k == instanceList[i]["instance_id"] then
-                queued = coloredText("O", "0000ff00")
+                queued = coloredText("Q", "0000ff00")
             end
         end
-        -- TODO this would be a great place to use QTip's multiple column support. When I tried, I couldn't get the layout right.
-        self:AddLine(queued .. " " .. text)
+        self:AddLine(queued, text)
     end
 end
 
 function broker_cta_display.build_tooltip(self)
-    self:AddHeader("Call To Arms")
+    -- col 1 is for queue status
+    -- col 2 is for words
+
+    self:AddHeader("", "Call To Arms")
     self:AddLine()
 
-    self:AddLine("Selected Roles")
+    self:AddLine("", "Selected Roles")
     local leader, tank, healer, damage = GetLFGRoles()
     local roles = wrapRoles(tank, healer, damage)
-    self:AddLine(displayRoles(roles))
+    self:AddLine("", displayRoles(roles))
     self:AddLine()
     self:AddSeparator()
 
@@ -63,19 +65,19 @@ function broker_cta_display.build_tooltip(self)
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
     if canBeTank then
-        self:AddLine(coloredText(roleNames[1], roleColors[1]))
+        self:AddLine("", coloredText(roleNames[1], roleColors[1]))
         displayList(self, tank, queued_ids)
         self:AddLine()
     end
 
     if canBeHealer then
-        self:AddLine(coloredText(roleNames[2], roleColors[2]))
+        self:AddLine("", coloredText(roleNames[2], roleColors[2]))
         displayList(self, healer, queued_ids)
         self:AddLine()
     end
 
     if canBeDPS then
-        self:AddLine(coloredText(roleNames[3], roleColors[3]))
+        self:AddLine("", coloredText(roleNames[3], roleColors[3]))
         displayList(self, dps, queued_ids)
         self:AddLine()
     end
