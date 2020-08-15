@@ -1,12 +1,5 @@
 broker_cta_display = {}
 
-local function concatTables(t1,t2)
-    for i=1,#t2 do
-        t1[#t1+1] = t2[i]
-    end
-    return t1
-end
-
 local function coloredText(text, color)
     return "\124c" .. color .. text .. "\124r"
 end
@@ -58,7 +51,7 @@ function broker_cta_display.build_tooltip(self)
     self:AddLine()
     self:AddSeparator()
 
-    local tank, healer, dps = broker_cta.filter(concatTables(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local tank, healer, dps = broker_cta.filter(broker_cta.build_list())
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
     if canBeTank then
@@ -81,7 +74,7 @@ function broker_cta_display.build_tooltip(self)
 end
 
 function broker_cta_display.build_label()
-    local tank, healer, dps = broker_cta.filter(concatTables(broker_cta.listDungeons(), broker_cta.listRaids()))
+    local tank, healer, dps = broker_cta.filter(broker_cta.build_list())
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
     local displayText = ""
     if canBeTank then
