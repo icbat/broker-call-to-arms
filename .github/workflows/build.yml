@@ -29,11 +29,22 @@ jobs:
 #     - name: Echo Verisons
 #       run: echo ${{ steps.get_versions.outputs.supported_version }} ${{ steps.get_versions.outputs.addon_version }}
 
-    - name: Upload to WoW Interface
-      uses: icbat/wow-addon-upload-action@v0.0.4
+    # - name: Upload to WoW Interface
+    #   uses: icbat/wow-addon-upload-action@v0.0.4
+    #   with:
+    #     id: 25623
+    #     zipFilePath: Broker_CTA.zip
+    #     compatible: 80300,80205,90000
+    #     version: ${{ steps.get_versions.outputs.addon_version }}
+    #     apiKey: ${{ secrets.WOW_INTERFACE }}
+
+    - name: Upload to CurseForge
+      uses: itsmeow/curseforge-upload@v2
       with:
-        id: 25623
-        zipFilePath: Broker_CTA.zip
-        compatible: 80300,80205,90000
-        version: ${{ steps.get_versions.outputs.addon_version }}
-        apiKey: ${{ secrets.WOW_INTERFACE }}
+        token: ${{ secrets.CURSEFORGE }}
+        project_id: 101689
+        game_endpoint: wow
+        file_path: Broker_CTA.zip
+        changelog: See https://github.com/icbat/broker-call-to-arms for latest changes
+        game_versions: 8.3.0,9.0.1
+        release_type: release
