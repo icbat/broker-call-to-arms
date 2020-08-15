@@ -1,5 +1,8 @@
 broker_cta_display = {}
 
+local ADDON, namespace = ...
+local L = namespace.L
+
 local function coloredText(text, color)
     return "\124c" .. color .. text .. "\124r"
 end
@@ -8,28 +11,13 @@ local function wrapRoles(tank, healer, damage)
     return {tank, healer, damage}
 end
 
-local roleNames = {"Tank", "Heal", "Damage"}
+local roleNames = {L["Tank"], L["Heal"], L["Damage"]}
 
 local roleColors = {"003498db", "0000f269", "00e74c3c"}
 
-local function displayRoles(roles)
-    local text = ""
-    for i = 1, #roles do
-        if roles[i] then
-            text = text .. coloredText(roleNames[i], roleColors[i]) .. " "
-        end
-    end
-
-    if text == "" then
-        return "None, select some in LFG window"
-    end
-
-    return text
-end
-
 local function displayList(self, instanceList, queued_ids)
     if instanceList == nil or #instanceList == 0 then
-        self:AddLine("", "No reward satchels found")
+        self:AddLine("", coloredText(L["No reward satchels found"], "00aaaaaa"))
         return
     end
 
@@ -39,7 +27,7 @@ local function displayList(self, instanceList, queued_ids)
 
         for _, k in pairs(queued_ids) do
             if k == instanceList[i]["instance_id"] then
-                queued = coloredText("Q", "0000ff00")
+                queued = coloredText(L["Q"], "0000ff00")
             end
         end
         self:AddLine(queued, text)
@@ -53,11 +41,6 @@ function broker_cta_display.build_tooltip(self)
     self:AddHeader("", "Call To Arms")
     self:AddLine()
 
-    self:AddLine("", "Selected Roles")
-    local leader, tank, healer, damage = GetLFGRoles()
-    local roles = wrapRoles(tank, healer, damage)
-    self:AddLine("", displayRoles(roles))
-    self:AddLine()
     self:AddSeparator()
 
     local tank, healer, dps = broker_cta.split_by_role(broker_cta.build_list())

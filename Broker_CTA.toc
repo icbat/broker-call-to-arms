@@ -11,6 +11,7 @@ libs/LibDataBroker-1.1.lua
 libs/LibQTip-1.0.lua
 
 ## This addon
+Localization.lua
 Broker_CTA.lua
 Display.lua
 Broker.lua
