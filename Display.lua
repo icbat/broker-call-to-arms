@@ -21,7 +21,7 @@ local function displayList(self, instanceList, queued_ids)
         return
     end
 
-    for i=1,#instanceList do
+    for i = 1, #instanceList do
         local text = instanceList[i]["name"]
         local queued = ""
 
@@ -81,6 +81,3 @@ function broker_cta_display.build_label()
     end
     return displayText
 end
-
-
-

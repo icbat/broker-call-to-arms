@@ -35,14 +35,13 @@ local function anchor_OnEnter(self)
     tooltip:Show()
 end
 
-
 -- tooltip/broker object settings
 function dataobj:OnEnter()
     anchor_OnEnter(self)
 end
 
 function dataobj:OnLeave()
-	-- Nothing to do. Needs to be defined for some display addons apparently
+    -- Nothing to do. Needs to be defined for some display addons apparently
 end
 
 function dataobj:OnClick()
@@ -50,7 +49,7 @@ function dataobj:OnClick()
 end
 
 function set_label(self)
-    dataobj.text =  broker_cta_display.build_label()
+    dataobj.text = broker_cta_display.build_label()
 end
 
 -- invisible frame for updating/hooking events
@@ -59,7 +58,9 @@ local UPDATEPERIOD = 5
 local elapsed = 0
 f:SetScript("OnUpdate", function(self, elap)
     elapsed = elapsed + elap
-	if elapsed < UPDATEPERIOD then return end
+    if elapsed < UPDATEPERIOD then
+        return
+    end
     elapsed = 0
     set_label(self)
 end)

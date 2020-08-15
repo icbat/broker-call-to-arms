@@ -1,5 +1,4 @@
 -- https://phanx.net/addons/tutorials/localize
-
 local _, namespace = ...
 
 local L = setmetatable({}, {
@@ -19,7 +18,6 @@ if LOCALE == "enUS" then
     -- uses the US English locale code.
     return
 end
-
 
 ---- To add translations, use this block as a starting point
 

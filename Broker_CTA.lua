@@ -1,6 +1,8 @@
 -- Dev helper functions
 local function starts_with(str, start)
-    if type(str) ~= "string" then return end
+    if type(str) ~= "string" then
+        return
+    end
     return str:sub(1, #start) == start
 end
 
@@ -12,7 +14,6 @@ local function print_keys(table, start)
     print('---')
 end
 ---
-
 
 local function concatTables(t1, t2)
     for i = 1, #t2 do
@@ -44,16 +45,17 @@ local function build_satchel_object(instance_id, name)
     local shortage_severity = 1
 
     -- https://wow.gamepedia.com/API_GetLFGRoleShortageRewards
-    local eligible, needs_tank, needs_healer, needs_damage, items, money, xp = GetLFGRoleShortageRewards(instance_id, shortage_severity)
+    local eligible, needs_tank, needs_healer, needs_damage, items, money, xp =
+        GetLFGRoleShortageRewards(instance_id, shortage_severity)
 
     return {
-        instance_id = instance_id;
-        name = name;
-        eligible = eligible;
-        needs_tank = needs_tank;
-        needs_healer = needs_healer;
-        needs_damage = needs_damage;
-        rewards = rewards_exist(items, money, xp);
+        instance_id = instance_id,
+        name = name,
+        eligible = eligible,
+        needs_tank = needs_tank,
+        needs_healer = needs_healer,
+        needs_damage = needs_damage,
+        rewards = rewards_exist(items, money, xp)
     }
 end
 
@@ -71,7 +73,6 @@ local function filter_interesting_dungeons(instances)
     return filtered_instances
 end
 
-
 -- Broker CTA / addon-specific functions
 broker_cta = {}
 
@@ -86,7 +87,7 @@ function broker_cta.split_by_role(instances)
     local healer = {}
     local dps = {}
 
-    for i=1,#instances do
+    for i = 1, #instances do
         if instances[i]["needs_tank"] then
             tank[#tank + 1] = instances[i]
         end
