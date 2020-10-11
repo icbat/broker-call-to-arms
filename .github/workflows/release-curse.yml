@@ -2,9 +2,9 @@ name: Release to Curse
 
 on:
   workflow_dispatch:
-    branches: [ master ]
+    branches: [ main ]
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -23,13 +23,13 @@ jobs:
     - name: Zip it good
       run: zip -9 -r Broker_CTA.zip Broker_CTA/
            
-    - name: Upload to CurseForge
-      uses: itsmeow/curseforge-upload@v2
-      with:
-        token: ${{ secrets.CURSEFORGE }}
-        project_id: 101689
-        game_endpoint: wow
-        file_path: Broker_CTA.zip
-        changelog: See https://github.com/icbat/broker-call-to-arms for latest changes
-        game_versions: 8.3.0,9.0.1
-        release_type: release
+    # - name: Upload to CurseForge
+    #   uses: itsmeow/curseforge-upload@v2
+    #   with:
+    #     token: ${{ secrets.CURSEFORGE }}
+    #     project_id: 101689
+    #     game_endpoint: wow
+    #     file_path: Broker_CTA.zip
+    #     changelog: See https://github.com/icbat/broker-call-to-arms for latest changes
+    #     game_versions: 8.3.0,9.0.1
+    #     release_type: release
