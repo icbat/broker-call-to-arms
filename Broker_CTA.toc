@@ -2,7 +2,7 @@
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 3
+## Version: 4
 
 ## Dependencies
 libs/LibStub.lua
