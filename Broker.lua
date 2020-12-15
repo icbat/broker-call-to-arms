@@ -20,7 +20,7 @@ local function anchor_OnEnter(self)
     end
 
     -- Acquire a tooltip with 3 columns, respectively aligned to left, center and right
-    local tooltip = LibQTip:Acquire("FooBarTooltip", 2, "RIGHT", "LEFT")
+    local tooltip = LibQTip:Acquire("BrokerCtaTooltip", 2, "RIGHT", "LEFT")
     self.tooltip = tooltip
     tooltip.OnRelease = OnRelease
     tooltip.OnLeave = OnLeave
