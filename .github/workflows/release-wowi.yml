@@ -60,3 +60,12 @@ jobs:
         asset_path: ./${{ env.ADDON_NAME }}.zip
         asset_name: ${{ env.ADDON_NAME }}.zip
         asset_content_type: application/zip
+
+    - name: Upload to WoW Interface
+      uses: icbat/wow-addon-upload-action@v1.0.1
+      with:
+        id: ${{ env.WOWI_ID }}
+        zipFilePath: ${{ env.ADDON_NAME }}.zip
+        compatible: ${{ steps.get_versions.outputs.supported_version }}
+        version: ${{ steps.get_versions.outputs.addon_version }}
+        apiKey: ${{ secrets.WOW_INTERFACE }}
