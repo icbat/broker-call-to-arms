@@ -1,8 +1,8 @@
-## Interface: 90100
+## Interface: 90105
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 8
+## Version: 9
 
 ## Dependencies
 libs/LibStub.lua
