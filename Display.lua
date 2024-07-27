@@ -27,6 +27,11 @@ local function buildCompletionMessage(instance_table, is_eligible)
     local total = instance_table["total_encounters"]
     local text = "  " .. completed .. "/" .. total
 
+    if total == 0 then
+        -- Dungeons, for example, show 0/0 otherwise
+        return ""
+    end
+
     if completed == total then
         return coloredText(text, red, is_eligible)
     end

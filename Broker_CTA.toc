@@ -2,7 +2,7 @@
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 16
+## Version: 17
 ## IconTexture: Interface/Addons/Broker_CTA/ick-logo
 
 ## Dependencies
