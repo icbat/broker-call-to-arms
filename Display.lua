@@ -9,6 +9,10 @@ local roleColors = {"003498db", "0000f269", "00e74c3c"}
 local grey = "00aaaaaa"
 local green = "0000ff00"
 local white = "00ffffff"
+local orange = "ffa500ff"
+local red = "00e74c3c"
+
+local num_columns = 3
 
 local function coloredText(text, color, is_eligible)
     if is_eligible then
@@ -18,14 +22,33 @@ local function coloredText(text, color, is_eligible)
     return "\124c" .. grey .. text .. "\124r"
 end
 
+local function buildCompletionMessage(instance_table, is_eligible)
+    local completed = instance_table["completed_encounters"]
+    local total = instance_table["total_encounters"]
+    local text = "  " .. completed .. "/" .. total
+
+    if completed == total then
+        return coloredText(text, red, is_eligible)
+    end
+
+    if completed > 0 then
+        return coloredText(text, orange, is_eligible)
+    end
+
+    return coloredText(text, white, is_eligible)
+end
+
 local function displayList(self, instanceList, is_eligible, queued_ids)
     if instanceList == nil or #instanceList == 0 then
-        self:AddLine("", coloredText("  " .. L["No reward satchels found"], grey))
+        self:AddLine()
+        local text = coloredText("  " .. L["No reward satchels found"], grey)
+        self:SetCell(self:GetLineCount(), 1, text, nil, "LEFT", num_columns)
         return
     end
 
     for i = 1, #instanceList do
         local text = coloredText("  " .. instanceList[i]["name"], white, is_eligible)
+        local completion = buildCompletionMessage(instanceList[i], is_eligible)
         local queued = ""
 
         for _, k in pairs(queued_ids) do
@@ -33,15 +56,17 @@ local function displayList(self, instanceList, is_eligible, queued_ids)
                 queued = coloredText(L["Q"], green, true)
             end
         end
-        self:AddLine(queued, text)
+        self:AddLine(text, completion, queued)
     end
 end
 
 function broker_cta_display.build_tooltip(self)
-    -- col 1 is for queue status
-    -- col 2 is for words
+    -- col 1 is for words
+    -- col 2 is for completion rate (0/3 bosses killed)
+    -- col 3 is for queue status
 
-    self:AddHeader("", "Call To Arms")
+    self:AddHeader("Call To Arms")
+    self:SetCell(1, 1, "Call To Arms", nil, "CENTER", num_columns)
     self:AddLine()
 
     self:AddSeparator()
@@ -50,15 +75,15 @@ function broker_cta_display.build_tooltip(self)
     local queued_ids = broker_cta.get_queued_instance_ids()
     local canBeTank, canBeHealer, canBeDPS = UnitGetAvailableRoles("player")
 
-    self:AddLine("", coloredText(roleNames[1], roleColors[1], canBeTank))
+    self:AddLine(coloredText(roleNames[1], roleColors[1], canBeTank))
     displayList(self, tank, canBeTank, queued_ids)
     self:AddLine()
 
-    self:AddLine("", coloredText(roleNames[2], roleColors[2], canBeHealer))
+    self:AddLine(coloredText(roleNames[2], roleColors[2], canBeHealer))
     displayList(self, healer, canBeHealer, queued_ids)
     self:AddLine()
 
-    self:AddLine("", coloredText(roleNames[3], roleColors[3], canBeDPS))
+    self:AddLine(coloredText(roleNames[3], roleColors[3], canBeDPS))
     displayList(self, dps, canBeDPS, queued_ids)
     self:AddLine()
 end

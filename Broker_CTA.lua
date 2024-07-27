@@ -47,7 +47,8 @@ local function build_satchel_object(instance_id, name)
     -- https://wow.gamepedia.com/API_GetLFGRoleShortageRewards
     local eligible, needs_tank, needs_healer, needs_damage, items, money, xp =
         GetLFGRoleShortageRewards(instance_id, shortage_severity)
-
+    local total_encounters, completed_encounters = GetLFGDungeonNumEncounters(instance_id)
+   
     return {
         instance_id = instance_id,
         name = name,
@@ -55,7 +56,9 @@ local function build_satchel_object(instance_id, name)
         needs_tank = needs_tank,
         needs_healer = needs_healer,
         needs_damage = needs_damage,
-        rewards = rewards_exist(items, money, xp)
+        rewards = rewards_exist(items, money, xp),
+        total_encounters = total_encounters,
+        completed_encounters = completed_encounters,
     }
 end
 
