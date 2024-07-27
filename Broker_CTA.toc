@@ -1,8 +1,9 @@
-## Interface: 100002
+## Interface: 110000
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 14
+## Version: 15
+## IconTexture: Interface/Addons/Broker_CTA/ick-logo
 
 ## Dependencies
 libs/LibStub.lua
