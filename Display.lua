@@ -32,6 +32,11 @@ local function buildCompletionMessage(instance_table, is_eligible)
         return ""
     end
 
+    if completed == 0 then
+        -- 0/3 is pretty useless feedback, remove these lines
+        return ""
+    end
+
     if completed == total then
         return coloredText(text, red, is_eligible)
     end
