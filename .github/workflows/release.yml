@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
       - name: Package and Upload to all the places 
         uses: BigWigsMods/packager@v2
         env:
