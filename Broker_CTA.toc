@@ -2,8 +2,12 @@
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
-## Version: 17
 ## IconTexture: Interface/Addons/Broker_CTA/ick-logo
+
+### BigWigs Packager Fields
+## Version: @project-version@
+## X-Wago-ID: bGoMAo60
+## X-WoWI-ID: 25623
 
 ## Dependencies
 libs/LibStub.lua

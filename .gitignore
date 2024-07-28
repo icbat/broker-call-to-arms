@@ -1,3 +1,6 @@
+# BigWigs Packager local script
+.release
+
 # Compiled Lua sources
 luac.out
 
