@@ -96,6 +96,10 @@ function broker_cta_display.build_tooltip(self)
     self:AddLine(coloredText(roleNames[3], roleColors[3], canBeDPS))
     displayList(self, dps, canBeDPS, queued_ids)
     self:AddLine()
+    
+    self:AddSeparator()
+    self:AddLine("Left click to open LFG")
+    self:AddLine("Right click to toggle minimap")
 end
 
 function broker_cta_display.build_label()

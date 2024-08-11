@@ -3,6 +3,7 @@
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
 ## IconTexture: Interface/Addons/Broker_CTA/ick-logo
+## SavedVariables: icbat_cta_minimap_settings
 
 ### BigWigs Packager Fields
 ## Version: @project-version@
@@ -14,6 +15,7 @@ libs/LibStub.lua
 libs/CallbackHandler-1.0.lua
 libs/LibDataBroker-1.1.lua
 libs/LibQTip-1.0.lua
+libs/LibDBIcon-1.0.lua
 
 ## This addon
 Localization.lua

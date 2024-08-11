@@ -1,11 +1,16 @@
 local LibQTip = LibStub('LibQTip-1.0')
+local icon = LibStub("LibDBIcon-1.0")
 
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 
 local addonName = "Call To Arms"
 local dataobj = ldb:NewDataObject(addonName, {
     type = "data source",
-    text = "Broker: Call to Arms"
+    text = "Broker: Call to Arms",
+    
+    -- Find the current satchel icon with this search, grab the icon name and put it behind \\Icons\\
+    -- https://www.wowhead.com/search?q=satchel%20of%20cooperation#items;0-3-2
+    icon = "Interface\\Icons\\inv_misc_bag_horadricsatchel",
 })
 
 local function OnRelease(self)
@@ -44,11 +49,33 @@ function dataobj:OnLeave()
     -- Nothing to do. Needs to be defined for some display addons apparently
 end
 
-function dataobj:OnClick()
-    ToggleLFDParentFrame()
+function dataobj:OnClick(button)
+    if button == "LeftButton" then
+        ToggleLFDParentFrame()
+    end
+
+    if button == "RightButton" then
+        icbat_cta_minimap_settings["hide"] = not icbat_cta_minimap_settings["hide"]
+        if icbat_cta_minimap_settings["hide"] then
+            icon:Hide(addonName)
+        else
+            icon:Show(addonName)
+        end
+    end
 end
 
-function set_label(self)
+function on_load_setup()
+    if icbat_cta_minimap_settings == nil then
+        icbat_cta_minimap_settings = {
+            hide = false,
+        }
+    end
+
+    icon:Register(addonName, dataobj, icbat_cta_minimap_settings)
+    set_label()
+end
+
+function set_label()
     dataobj.text = broker_cta_display.build_label()
 end
 
@@ -62,8 +89,8 @@ f:SetScript("OnUpdate", function(self, elap)
         return
     end
     elapsed = 0
-    set_label(self)
+    set_label()
 end)
 
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
-f:SetScript("OnEvent", set_label)
+f:SetScript("OnEvent", on_load_setup)
