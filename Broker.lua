@@ -71,7 +71,10 @@ function on_load_setup()
         }
     end
 
-    icon:Register(addonName, dataobj, icbat_cta_minimap_settings)
+    if not icon:IsRegistered(addonName) then
+        icon:Register(addonName, dataobj, icbat_cta_minimap_settings)
+    end
+
     set_label()
 end
 
