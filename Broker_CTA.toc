@@ -1,9 +1,10 @@
-## Interface: 110002
+## Interface: 120000
 ## Title: Broker: Call to Arms
 ## Notes: Call to Arms bonus satchel scanning
 ## Author: @icbat
 ## IconTexture: Interface/Addons/Broker_CTA/ick-logo
 ## SavedVariables: icbat_cta_minimap_settings
+## Category: Data Broker
 
 ### BigWigs Packager Fields
 ## Version: @project-version@
